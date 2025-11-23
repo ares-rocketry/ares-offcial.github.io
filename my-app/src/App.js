@@ -36,13 +36,13 @@ function App() {
       
 
       <header className="App-header">
-         <img className="ares-logo" src="/ares-logo.png" alt="Ares Logo"/>
+         <img className="ares-logo" src={process.env.PUBLIC_URL ? `${process.env.PUBLIC_URL}/ares-logo.png` : '/ares-logo.png'} alt="Ares Logo" onError={(e) => { console.error('Image failed to load:', e.target.src); }} />
       </header>
  
       <main>
-          <div className='horizontal-container'>
+        <div className='horizontal-container'>
         
-              <div className='vertical-container'>
+            <div className='vertical-container'>
                    
 
               </div>

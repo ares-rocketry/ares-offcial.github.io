@@ -7,26 +7,32 @@ import './App.css'
 
 const ThreeDScene = () => {
   useEffect(() => {
-    console.log('ThreeDScene useEffect is running');
     // Set up the scene, camera, and renderer
     const scene = new THREE.Scene();
 
     // const gridHelper = new THREE.GridHelper(100, 100, 'black', 'black');
     // scene.add(gridHelper);
 
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
+    // Increase far plane to see the model (model is at y=-5300)
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
     const renderer = new THREE.WebGLRenderer({ alpha: true }); // Alpha allows transparency
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(0x000000, 0); // Transparent background
     renderer.domElement.style.position = 'fixed'; // Use fixed positioning
     renderer.domElement.style.top = '0';
     renderer.domElement.style.left = '0';
     renderer.domElement.style.width = '100%';
     renderer.domElement.style.height = '100%';
     renderer.domElement.style.pointerEvents = 'auto'; // Ensure mouse dragging work, don't set to 'fixed'
+    renderer.domElement.style.zIndex = '0';
 
     const container = document.getElementById('three-container');
-    console.log('Container:', container);
-    console.log('Renderer element:', renderer.domElement);
+    
+    if (!container) {
+      console.error('ERROR: three-container element not found!');
+      return;
+    }
+    
     container.appendChild(renderer.domElement);
 
     // Variables for drag interaction
@@ -40,30 +46,43 @@ const ThreeDScene = () => {
 
     // Load the GLTF model
     const loader = new GLTFLoader();
-    loader.load('/Lemaire.glb', (gltf) => {
-      model = gltf.scene;
+    const publicUrl = process.env.PUBLIC_URL || '';
+    let modelPath = `${publicUrl}/Lemaire.glb`.replace(/\/+/g, '/'); // Fix multiple slashes
+    // If publicUrl is empty, use absolute path from root
+    if (!publicUrl || publicUrl === '/') {
+      modelPath = '/Lemaire.glb';
+    }
+    
+    loader.load(
+      modelPath,
+      (gltf) => {
+        model = gltf.scene;
 
-      const textureLoader = new THREE.TextureLoader();
+        const textureLoader = new THREE.TextureLoader();
 
-      model.traverse((child) => {
-        if (child.isMesh) {
-          console.log('Material:', child.material);
-          child.material.wireframe = false;
-          child.material.roughness = 0.5;
-        }
-      });
+        model.traverse((child) => {
+          if (child.isMesh) {
+            child.material.wireframe = false;
+            child.material.roughness = 0.5;
+          }
+        });
 
-      // Adjust model position relative to wrapper so the pivot is at desired point (e.g., nose of rocket)
-      model.position.set(0, -5000, 0); // Center the model relative to wrapper
-      model.rotation.set(0, -15.65, 0);
-      model.scale.set(2000, 2000, 2000); // Make the model larger
+        // Adjust model position relative to wrapper so the pivot is at desired point (e.g., nose of rocket)
+        model.position.set(0, -5000, 0); // Center the model relative to wrapper
+        model.rotation.set(0, -15.65, 0);
+        model.scale.set(2000, 2000, 2000); // Make the model larger
 
-      // Add model to wrapper
-      rocketWrapper.add(model);
+        // Add model to wrapper
+        rocketWrapper.add(model);
 
-      // Add wrapper to scene instead of model
-      scene.add(rocketWrapper);
-    });
+        // Add wrapper to scene instead of model
+        scene.add(rocketWrapper);
+      },
+      undefined,
+      (error) => {
+        console.error('ERROR loading GLTF model:', error);
+      }
+    );
 
 
     // Add lighting
@@ -90,7 +109,6 @@ const ThreeDScene = () => {
 
     // Drag-to-rotate implementation
     const onMouseDown = (event) => {
-      console.log('Mouse down, model:', model);
       isDragging = true;
       previousMouseX = event.clientX;
     };
@@ -101,7 +119,6 @@ const ThreeDScene = () => {
         const rotationSpeed = 0.005;
         rocketWrapper.rotation.y += deltaX * rotationSpeed;
         previousMouseX = event.clientX;
-        console.log('Rotating model, new rotation:', rocketWrapper.rotation.y);
       }
     };
 
@@ -109,11 +126,9 @@ const ThreeDScene = () => {
       isDragging = false;
     };
 
-    console.log('Adding event listeners to renderer element');
     renderer.domElement.addEventListener('mousedown', onMouseDown);
     renderer.domElement.addEventListener('mousemove', onMouseMove);
     renderer.domElement.addEventListener('mouseup', onMouseUp);
-    console.log('Event listeners added');
 
     // Scroll-to-reveal implementation
     const minY = 300;
@@ -125,8 +140,9 @@ const ThreeDScene = () => {
     /* CONCLUSION: wherever the camera it set, it should also look at that exact SAME spot (no tilting) 
                     so camera only TRANSLATE vertically from tip (minY) down bottom (maxY) */
 
-    camera.position.set(0, minY, Z); // y= 400 above (just at nose cone tip)
-    camera.lookAt(0, minY, Z);           // Keep lookAt fixed at the rocket's position => translate the camera down
+    camera.position.set(0, minY, Z); // y= 300 above (just at nose cone tip)
+    // Look at the rocket's position (rocketWrapper is at y=-300)
+    camera.lookAt(0, rocketWrapper.position.y, 0);
 
     const handleScroll = () => {
       const scrollY = window.scrollY;
@@ -138,8 +154,8 @@ const ThreeDScene = () => {
       
       camera.position.y = minY + (maxY - minY) * easedPercent;
       
-      // Keep lookAt fixed at the rocket's position - don't move the target
-    
+      // Keep lookAt fixed at the rocket's position - look at the wrapper position
+      camera.lookAt(0, rocketWrapper.position.y, 0);
       
       // Update progress bar
       const progressBar = document.getElementById('scroll-progress');
@@ -176,8 +192,10 @@ const ThreeDScene = () => {
       renderer.domElement.removeEventListener('mousemove', onMouseMove);
       renderer.domElement.removeEventListener('mouseup', onMouseUp);
       renderer.domElement.removeEventListener('mousedown', onMouseDown);
+      if (container && renderer.domElement.parentNode === container) {
+        container.removeChild(renderer.domElement);
+      }
       renderer.dispose();
-      container.removeChild(renderer.domElement);
     };
   }, []);
 
