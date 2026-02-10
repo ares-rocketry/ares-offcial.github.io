@@ -47,7 +47,6 @@ const ThreeDScene = () => {
     // Load the GLTF model
     const loader = new GLTFLoader();
     const publicUrl = process.env.PUBLIC_URL || '';
-    // fix problem where model not loaded sometimes by changing to public URL
     let modelPath = `${publicUrl}/Lemaire.glb`.replace(/\/+/g, '/'); // Fix multiple slashes
     // If publicUrl is empty, use absolute path from root
     if (!publicUrl || publicUrl === '/') {
@@ -70,7 +69,7 @@ const ThreeDScene = () => {
 
         // Adjust model position relative to wrapper so the pivot is at desired point (e.g., nose of rocket)
         model.position.set(0, -5000, 0); // Center the model relative to wrapper
-        model.rotation.set(0, 0, 0);
+        model.rotation.set(0, -15.65, 0);
         model.scale.set(2000, 2000, 2000); // Make the model larger
 
         // Add model to wrapper
@@ -178,7 +177,7 @@ const ThreeDScene = () => {
     const animate = () => {
       requestAnimationFrame(animate);
       if (model && !isDragging) {
-        rocketWrapper.rotation.y += 0.001; // Automatic rotation around Y-axis
+        rocketWrapper.rotation.y += 0.002; // Automatic rotation around Y-axis
       }
       renderer.render(scene, camera);
     };
