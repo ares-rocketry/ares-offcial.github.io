@@ -1,36 +1,113 @@
+/* this creates an effect for the active link text on hover in the navbar */
+/* 'active' is a class that's automatically applied */
+/* (.) because it's the class selector */
+.active {
+  background-color: #4246a3;
+}
 nav {
-    display: flex;
-    z-index: 1000;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 2rem;
-    background-color: #131545;
+  display: flex;
+  z-index: 1000;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #131545; /* ARES color */
+  position: sticky;
+  top: 0; /* Sticks to the top */
+  width: 100%;
 }
 
 nav .title {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #fff;
-    text-decoration: none;  /* removes underline */
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #fff;
+  text-decoration: none; /* removes underline */
 }
 
 nav ul {
-    list-style: none;
-    display: flex;
+  list-style: none;
+  display: flex;
 }
 
 nav ul li {
-    list-style: none;  /* removes bullet points */
+  list-style: none; /* removes bullet points */
 }
 
 nav ul li a {
-    display: block;
-    text-decoration: none;
-    color: white !important;
-    font-size: 20px;
-    padding: 0.5rem 1rem;
-    transition: background-color 0.3s ease;
-    margin: 0 0.5rem;
-    border-radius: 0.5rem;
+  display: block;
+  text-decoration: none;
+  color: white !important;
+  font-size: 20px;
+  padding: 0.5rem 1rem;
+  transition: background-color 0.3s ease;
+  margin: 0 0.5rem;
+  border-radius: 0.5rem;
+}
 
+nav ul li a:not(.active):hover {
+  background-color: #4246a3;
+}
+
+nav .menu {
+  display: none; /* Hidden by default */
+  position: absolute;
+  top: 0.75rem;
+  right: 0.5rem;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 2.25rem;
+  height: 2rem;
+  cursor: pointer;
+  z-index: 1001;
+}
+nav .menu span {
+  display: block;
+  height: 0.5rem;
+  background-color: #ffffff !important;
+  border-radius: 0.2rem;
+  width: 100%;
+  /* Override global span text effects from App.css */
+  background-image: none !important;
+  background-clip: border-box !important;
+  -webkit-background-clip: border-box !important;
+  -webkit-text-fill-color: initial !important;
+  color: white !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* To show the hamburger menu when screen is below 900px*/
+@media (max-width: 900px) {
+  nav .menu {
+    display: flex; /* Show the hamburger menu on small screens */
+    position: fixed;
+  }
+
+  nav {
+    flex-direction: column;
+    align-items: start;
+    width: 100%;
+    height: auto;
+    top:0;
+    position: sticky;
+  }
+
+  nav ul {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 0.25rem;
+  }
+
+  nav ul.open {
+    display: flex; /* Show the menu when open */
+  }
+
+  nav ul li {
+    width: 100%;
+    text-align: center;
+  }
+
+  nav ul li a {
+    margin: 0.2rem 0.5rem;
+  }
 }
