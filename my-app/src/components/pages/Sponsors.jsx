@@ -1,0 +1,1 @@
+export const Sponsors = () => <div>MONEY NOWWW</div>;

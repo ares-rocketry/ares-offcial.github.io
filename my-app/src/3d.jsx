@@ -23,8 +23,8 @@ const ThreeDScene = () => {
     renderer.domElement.style.left = '0';
     renderer.domElement.style.width = '100%';
     renderer.domElement.style.height = '100%';
-    renderer.domElement.style.pointerEvents = 'auto'; // Ensure mouse dragging work, don't set to 'fixed'
-    renderer.domElement.style.zIndex = '0';
+    renderer.domElement.style.pointerEvents = 'none'; // Avoid blocking nav clicks; adjust if 3D dragging is needed.
+    renderer.domElement.style.zIndex = '-1';
 
     const container = document.getElementById('three-container');
     

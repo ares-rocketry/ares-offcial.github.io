@@ -1,0 +1,36 @@
+nav {
+    display: flex;
+    z-index: 1000;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: #131545;
+}
+
+nav .title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fff;
+    text-decoration: none;  /* removes underline */
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+}
+
+nav ul li {
+    list-style: none;  /* removes bullet points */
+}
+
+nav ul li a {
+    display: block;
+    text-decoration: none;
+    color: white !important;
+    font-size: 20px;
+    padding: 0.5rem 1rem;
+    transition: background-color 0.3s ease;
+    margin: 0 0.5rem;
+    border-radius: 0.5rem;
+
+}
