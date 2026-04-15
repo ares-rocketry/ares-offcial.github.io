@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import './App.css';
-import ThreeDScene from './3d';
-import { Navbar} from './components/Navbar';
-import { Home, About, Sponsors, Gallery, Join } from './components/pages';
-import { Routes, Route } from "react-router-dom";
-
-
+import React, { useState, useEffect } from "react";
+import "./App.css";
+import ThreeDScene from "./3d";
+import { Navbar } from "./components/Navbar";
+import { Home, About, Sponsors, Gallery, Join } from "./components/pages";
+import { Routes, Route, useLocation } from "react-router-dom";
 
 function App() {
+  const location = useLocation();
+  const hideLogo = location.pathname !== "/";
   const [timer, setTimer] = useState(0);
-  const [typedText, setTypedText] = useState('');
+  const [typedText, setTypedText] = useState("");
 
   /* TYPEWRITTER EFFECT */
   // useEffect(() => {
@@ -26,7 +26,7 @@ function App() {
   //       clearInterval(timerId); // Stop the interval when typing is complete
   //     }
   //   }, 150);
-  //   return () => clearInterval(timerId); // Cleanup 
+  //   return () => clearInterval(timerId); // Cleanup
   // }, []); // Empty dependency array to run only once when page loads
 
   return (
@@ -40,22 +40,25 @@ function App() {
         <Route path="/join" element={<Join />} />
       </Routes>
 
-
       <div id="three-container">
         <ThreeDScene />
       </div>
-
-      <header className="App-header">
-        <img
-          className="ares-logo"
-          src={process.env.PUBLIC_URL ? `${process.env.PUBLIC_URL}/ares-logo.png` : '/ares-logo.png'}
-          alt="Ares Logo"
-          onError={(e) => {
-            console.error('Image failed to load:', e.target.src);
-          }}
-        />
-      </header>
-
+      {!hideLogo && ( // only shows logo on homepage
+        <header className="App-header">
+          <img
+            className="ares-logo"
+            src={
+              process.env.PUBLIC_URL
+                ? `${process.env.PUBLIC_URL}/ares-logo.png`
+                : "/ares-logo.png"
+            }
+            alt="Ares Logo"
+            onError={(e) => {
+              console.error("Image failed to load:", e.target.src);
+            }}
+          />
+        </header>
+      )}
       <main>
         <div className="horizontal-container">
           <div className="vertical-container"></div>
